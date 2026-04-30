@@ -13,7 +13,7 @@ function App() {
   });
   
   const [jobId, setJobId] = useState(null);
-  const [status, setStatus] = useState('idle'); // idle, queued, downloading data, training, evaluating, completed, error
+  const [status, setStatus] = useState('idle'); // idle, queued, downloading data, training, evaluating, stopping, completed, error, cancelled
   const [progress, setProgress] = useState(0);
   const [logs, setLogs] = useState([]);
   const [results, setResults] = useState(null);
@@ -49,7 +49,7 @@ function App() {
           });
         }
         
-        if (data.status === 'completed' || data.status === 'error') {
+        if (['completed', 'error', 'cancelled'].includes(data.status)) {
           clearInterval(intervalId);
           if (data.status === 'completed') {
             setResults({
@@ -63,7 +63,7 @@ function App() {
       }
     };
 
-    if (jobId && !['completed', 'error'].includes(status)) {
+    if (jobId && !['completed', 'error', 'cancelled'].includes(status)) {
       intervalId = setInterval(checkStatus, 1000);
     }
     
@@ -99,14 +99,29 @@ function App() {
     });
   };
 
+  const handleStopTraining = async () => {
+    if (!jobId) return;
+    try {
+      await axios.post(`${API_BASE}/stop/${jobId}`);
+      setStatus('stopping');
+      setLogs(prev => [...prev, 'Stop requested...']);
+    } catch (err) {
+      setLogs(prev => [...prev, `Failed to stop: ${err.message}`]);
+    }
+  };
+
   const getStatusBadge = () => {
     switch(status) {
       case 'idle': return null;
       case 'completed': return <span className="status-badge" style={{color: 'var(--accent-primary)', background: 'rgba(0,212,170,0.1)', borderColor: 'rgba(0,212,170,0.2)'}}>Completed</span>;
       case 'error': return <span className="status-badge" style={{color: 'var(--accent-danger)', background: 'rgba(248,81,73,0.1)', borderColor: 'rgba(248,81,73,0.2)'}}>Error</span>;
+      case 'cancelled': return <span className="status-badge" style={{color: 'var(--accent-warning)', background: 'rgba(255,166,87,0.12)', borderColor: 'rgba(255,166,87,0.25)'}}>Cancelled</span>;
+      case 'stopping': return <span className="status-badge" style={{color: '#79c0ff', background: 'rgba(121,192,255,0.12)', borderColor: 'rgba(121,192,255,0.25)'}}>Stopping...</span>;
       default: return <span className="status-badge" style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}><span className="loader" style={{width: '12px', height: '12px', borderWidth: '2px'}}></span> {status}</span>;
     }
   };
+
+  const isRunning = !['idle', 'completed', 'error', 'cancelled'].includes(status);
 
   return (
     <div className="app-container">
@@ -194,6 +209,16 @@ function App() {
             <>Launch Training Agent <Play size={20} /></>
           )}
         </button>
+        {isRunning && (
+          <button
+            className="btn-primary"
+            onClick={handleStopTraining}
+            disabled={status === 'stopping'}
+            style={{marginLeft: '0.75rem', background: 'var(--accent-danger)', opacity: status === 'stopping' ? 0.7 : 1}}
+          >
+            Stop Training <AlertTriangle size={18} />
+          </button>
+        )}
       </div>
 
       {/* Status & Terminal Panel */}
@@ -212,7 +237,7 @@ function App() {
             {logs.map((log, i) => (
               <div key={i} className="terminal-line">{log}</div>
             ))}
-            {status !== 'completed' && status !== 'error' && (
+            {status !== 'completed' && status !== 'error' && status !== 'cancelled' && (
               <div className="terminal-line" style={{animation: 'pulse 1.5s infinite'}}>_</div>
             )}
           </div>
