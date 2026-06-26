@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Activity, Play, CheckCircle, TrendingUp, AlertTriangle, ArrowRight, DollarSign, Percent, RefreshCw } from 'lucide-react';
 import './index.css';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function App() {
   const [config, setConfig] = useState({
@@ -64,7 +64,9 @@ function App() {
     };
 
     if (jobId && !['completed', 'error', 'cancelled'].includes(status)) {
-      intervalId = setInterval(checkStatus, 1000);
+      checkStatus();
+      const pollMs = status === 'stopping' ? 250 : 1000;
+      intervalId = setInterval(checkStatus, pollMs);
     }
     
     return () => clearInterval(intervalId);
@@ -102,10 +104,21 @@ function App() {
   const handleStopTraining = async () => {
     if (!jobId) return;
     try {
-      await axios.post(`${API_BASE}/stop/${jobId}`);
       setStatus('stopping');
-      setLogs(prev => [...prev, 'Stop requested...']);
+      const res = await axios.post(`${API_BASE}/stop/${jobId}`);
+      setStatus(res.data.status || 'cancelled');
+      setLogs(prev => [...prev, 'Training stopped.']);
+
+      const statusRes = await axios.get(`${API_BASE}/status/${jobId}`);
+      setStatus(statusRes.data.status);
+      if (statusRes.data.logs?.length) {
+        setLogs(prev => {
+          const merged = [...prev, ...statusRes.data.logs];
+          return Array.from(new Set(merged.map(JSON.stringify))).map(JSON.parse);
+        });
+      }
     } catch (err) {
+      setStatus('error');
       setLogs(prev => [...prev, `Failed to stop: ${err.message}`]);
     }
   };
@@ -122,6 +135,7 @@ function App() {
   };
 
   const isRunning = !['idle', 'completed', 'error', 'cancelled'].includes(status);
+  const canLaunch = ['idle', 'completed', 'error', 'cancelled'].includes(status);
 
   return (
     <div className="app-container">
@@ -139,7 +153,7 @@ function App() {
               name="ticker" 
               value={config.ticker} 
               onChange={handleConfigChange} 
-              disabled={status !== 'idle' && status !== 'completed' && status !== 'error'}
+              disabled={!canLaunch}
               className="custom-select"
             >
               <option value="AAPL">Apple (AAPL)</option>
@@ -159,7 +173,7 @@ function App() {
               name="episodes" 
               value={config.episodes} 
               onChange={handleConfigChange}
-              disabled={status !== 'idle' && status !== 'completed' && status !== 'error'}
+              disabled={!canLaunch}
             />
           </div>
           <div className="input-group">
@@ -169,7 +183,7 @@ function App() {
               name="initial_balance" 
               value={config.initial_balance} 
               onChange={handleConfigChange}
-              disabled={status !== 'idle' && status !== 'completed' && status !== 'error'}
+              disabled={!canLaunch}
             />
           </div>
           <div className="input-group">
@@ -178,7 +192,7 @@ function App() {
               name="lr" 
               value={config.lr || 0.0001} 
               onChange={handleConfigChange} 
-              disabled={status !== 'idle' && status !== 'completed' && status !== 'error'}
+              disabled={!canLaunch}
               className="custom-select"
             >
               <option value={0.001}>High (0.001)</option>
@@ -193,7 +207,7 @@ function App() {
               name="window_size" 
               value={config.window_size || 10} 
               onChange={handleConfigChange}
-              disabled={status !== 'idle' && status !== 'completed' && status !== 'error'}
+              disabled={!canLaunch}
             />
           </div>
         </div>
@@ -201,9 +215,9 @@ function App() {
         <button 
           className="btn-primary"
           onClick={handleStartTraining}
-          disabled={status !== 'idle' && status !== 'completed' && status !== 'error'}
+          disabled={!canLaunch}
         >
-          {status !== 'idle' && status !== 'completed' && status !== 'error' ? (
+          {!canLaunch ? (
             <>Initializing <span className="loader" style={{borderColor: '#000', borderTopColor: 'transparent'}}></span></>
           ) : (
             <>Launch Training Agent <Play size={20} /></>
