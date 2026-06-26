@@ -236,7 +236,7 @@ function App() {
       </div>
 
       {/* Status & Terminal Panel */}
-      {jobId && (
+      {(jobId || status !== 'idle') && (
         <div className="status-panel">
           <div className="status-header">
             <h2 className="status-title"><Activity size={24} color="var(--accent-primary)" /> Execution Console</h2>
