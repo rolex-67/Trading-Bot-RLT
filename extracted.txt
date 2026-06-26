@@ -1,0 +1,393 @@
+0: Autonomous Collision Avoidance for LEO Satellites
+2: 21AIC302J
+3: REINFORCEMENT LEARNING TECHNIQUES
+5: Submitted by
+6: MOHIT VS [RA2311047010108]
+7: ARITRA ROY [RA2311047010093]
+8: MITHUN MARTIN [RA2311047010113]
+10: Under the Guidance of
+11: Ms. Reena K
+13: Assistant Professor, Department of Computational Intelligence
+16: in partial fulfillment of the requirements for the degree of
+18: BACHELOR OF TECHNOLOGY
+19: in
+20: ARTIFICIAL INTELLIGENCE
+24: DEPARTMENT OF COMPUTATIONAL INTELLIGENCE COLLEGE OF ENGINEERING AND TECHNOLOGY
+25: SRM INSTITUTE OF SCIENCE AND TECHNOLOGY
+26: KATTANKULATHUR- 603 203
+29: MAY  2026
+37: ABSTRACT
+38: The escalating volume of space debris in Low Earth Orbit (LEO) introduces significant collision risks to critical satellite missions and global communication infrastructure. Each new piece of debris heightens the probability of catastrophic collisions, threatening operational assets. Traditional collision avoidance strategies typically rely on fixed thresholds and manual interventions, which lack the adaptability needed for dynamic LEO conditions. These conventional methods often result in inefficient fuel consumption and delayed responses, forcing operators into a constant trade-off between preserving limited fuel and the imperative of avoiding collisions. To address these limitations, this project introduces a Reinforcement Learning (RL) based decision-support system designed for autonomous satellite collision avoidance maneuver selection. The core methodology leverages the principles of Markov Decision Processes (MDP) to enable sequential decision-making under uncertainty. Conjunction events are comprehensively modeled using key state parameters, including collision probability, miss distance, relative velocity, and available fuel. The RL agent selects from available responses—ranging from no maneuver to large maneuvers—each with distinct fuel implications. Guided by a carefully crafted reward function that penalizes collisions, excessive fuel usage, and risk, the RL module learns an optimal maneuver policy. 
+39: Our evaluation demonstrates that this RL-based system significantly improves operational efficiency and decision-making. By intelligently balancing collision risk with fuel expenditure, the framework rigorously upholds satellite safety standards and provides a robust, autonomous alternative to conventional threshold-based methods.
+40: Keywords: Autonomous Collision Avoidance, Reinforcement Learning (RL), Low Earth Orbit (LEO), Space Debris Mitigation, Markov Decision Process (MDP), Fuel Optimization, Satellite Safety
+43: TABLE OF CONTENTS
+46: CHAPTER NO.		TITLE						PAGE NO.
+48: 1  INTRODUCTION	4
+49: 1.1  Introduction to Project	4
+50: 1.2  Problem Statement and Description	4
+51: 2  PROJECT OBJECTIVES	5
+52: 3  COMPARATIVE STUDIES	6
+53: 4  SYSTEM ARCHITECTURE	10
+54: 4.1  High-Level Architecture	10
+55: 4.2 Technology Stack	11
+56: 5  MDP Formulation & DQN Design	13
+57:    5.1  MDP Formulation	13
+58:    5.2  Deep Q-Network Architecture	15
+59:    5.3  Reward Function	16
+60: 6  RESULTS AND EVALUATION	17
+61:    6.1  Key Metrics	18
+62:    6.2  Convergence & Test Results	19
+63: 7  CONCLUSION	20
+64:    References	21
+69: CHAPTER 1
+70: INTRODUCTION
+71: 1.1 Project Background
+The Low Earth Orbit (LEO) environment is becoming increasingly congested due to a rapidly growing population of space debris, defunct satellites, and discarded rocket stages. This escalating volume of orbital debris introduces significant collision risks to critical satellite missions and global communication infrastructure. Every new piece of debris magnifies the probability of catastrophic collisions, which severely threatens operational space assets.  To overcome these limitations, this project introduces a novel, autonomous decision-support system powered by Reinforcement Learning (RL). The proposed system is designed to autonomously select collision avoidance maneuvers by evaluating complex conjunction events. By comprehensively modeling the environment with crucial parameters—such as collision probability, miss distance, relative velocity, and available fuel capacity—the RL agent is trained to identify and execute the most effective maneuvers. 
+72: 1.2 Problem Statement
+The fundamental challenge addressed in this project is the ability to safely navigate a spacecraft through a dynamic, hazard-filled environment—representing the debris-populated Low Earth Orbit (LEO)—while operating under strict resource limitations. The core problem is framed around a critical constraint: fuel is highly limited, and every maneuver incurs a tangible costWithin the context of our system simulation, this problem is defined by a dichotomy of choices that the agent must navigate:
+73: Move: Executing an evasive maneuver successfully avoids immediate danger, but it fundamentally consumes irreplaceable fuel with every action taken. 
+74: Stay (Idle): Choosing not to maneuver conserves fuel, but it significantly increases the risk of a collision with approaching debris or asteroids over time. 
+76: CHAPTER 2
+77: PROJECT OBJECTIVES
+78: Design a Reinforcement Learning framework to enable autonomous spacecraft collision avoidance. 
+79: Model conjunction events by incorporating critical engineering parameters such as collision probability, miss distance, velocity, and fuel. 
+80: Minimize collision risk while concurrently optimizing fuel consumption to extend overall mission life. 
+81: Evaluate the performance of the proposed RL model against traditional rule-based threshold methods. 
+82: Demonstrate the effectiveness of a Markov Decision Process (MDP) based framework for sequential decision-making. 
+86: CHAPTER 3
+87: COMPARATIVE STUDY
+88: Methods, Environments & State/Action Spaces
+89: Comparison of reinforcement learning methods used in dynamic pricing literature against the proposed system
+92: Results, Limitations & Proposed Advantages
+93: Revenue outcomes, identified limitations of prior work, and how the proposed system addresses each gap
+94: Note: Revenue gain figures are as reported in respective papers or derived from evaluation metrics. The proposed method's gains are measured against a static $100 baseline over 50 held-out evaluation episodes
+96: CHAPTER 4
+97: SYSTEM ARCHITECTURE
+99: 4.1 High-Level Architecture
+The proposed collision avoidance system is structured around a closed-loop Reinforcement Learning (RL) architecture, wherein the agent interacts with the environment in a continuous loop of perceiving, acting, and learning from rewards. This design enables the agent to continuously refine its navigation policy through experience, allowing it to adapt to dynamic threats while managing resources. 
+100: The comprehensive architecture and data flow consist of four primary interconnected components: 
+101: Simulation Environment: The environment is engineered as a 2D continuous space simulation that models the physical dynamics of the spacecraft. It incorporates velocity-based movement with applied friction, real-time rendering, and random asteroid spawning with variable speeds and directions, ensuring diverse and challenging conjunction scenarios. 
+102: Lidar-Based Perception and Preprocessing: To perceive threats, the spacecraft relies on a 16-ray perception system that detects nearby obstacles in real time, generating a continuous observation range vector. This continuous data is fed into a state preprocessing and discretization module, which categorizes obstacle distances (e.g., Near, Medium, Far) to construct a structured state matrix for the neural network. 
+103: RL Agent and Action Selection: The decision-making core is a Deep Q-Network (DQN) agent implemented using PyTorch. The agent processes the state matrix and employs an $\epsilon$-greedy policy to balance exploration and exploitation during action selection. It then outputs a specific maneuver command (such as moving Up, Down, Left, Right, or remaining Idle). 
+104: Reward Evaluation and Policy Update: Following the execution of an action, the environment provides an immediate reward feedback loop—distributing positive reinforcement for survival and severe penalties for collisions. The agent utilizes this feedback to update its Q-values through the Bellman equation and temporal difference error calculations, learning the optimal survival strategy over successive episodes. 
+109: 4.2 Technology Stack
+112: CHAPTER 5
+113: MDP Formulation & DQN Design
+114: 5.1 MDP Formulation
+116: 5.2 Deep Q-Network Architecture
+117: To effectively handle the complex, continuous state space presented in this problem, a Deep Q-Network (DQN) is employed to approximate the optimal action-value function, denoted as $Q(s, a; \theta)$, where $\theta$ represents the weights of the neural network.
+118: The network architecture is structured as a fundamental fully connected deep neural network. The input layer consists of 35 neurons, directly corresponding to the 35-dimensional state vector (16 lidar distance values, 16 hit flags, normalized fuel level, and two velocity components). The internal processing is managed by multiple fully connected hidden layers utilized to learn the complex relationships between the state components. These hidden layers employ Rectified Linear Unit (ReLU) nonlinear activation functions to capture non-linear dynamics. The output layer contains 5 neurons, with each neuron representing the predicted Q-value for one of the discrete actions in the action space (Idle, Thrust Up, Down, Left, and Right).
+119: To enhance training stability and convergence, several critical mechanisms are integrated into the DQN architecture:
+120: Experience Replay: The training process utilizes a reply buffer memory that stores transition tuples ($s, a, r, s', done$). During training, mini-batches of these transitions are sampled randomly. This technique effectively breaks the temporal correlation inherent in sequential observational data and improves data efficiency.
+121: Target Network: A separate target neural network ($Q'$) is maintained specifically to compute stable target values ($y$). The weights of this target network are updated only periodically to match the primary online network. This prevents the primary network from chasing a rapidly moving target, which often leads to divergence in Deep RL. The target is calculated as:
+123: Epsilon-Greedy Policy: To balance exploration of new strategies and exploitation of learned knowledge during training, an $\epsilon$-greedy action selection policy is implemented. This policy ensures that:With probability $\epsilon$, the agent selects a random action to explore the environment. Otherwise (with probability $1-\epsilon$), the agent exploits the current learned model by choosing $\arg\max Q(s, a)$.
+124: Loss Function: The optimization of the primary network is achieved by minimizing the Mean Squared Error (MSE) loss between the predicted Q-value and the calculated target Q-value:
+126: 5.3 Reward Function
+127: The reward function, $R_t$, is arguably the most critical component of the Reinforcement Learning framework, as it formalizes the system's objectives and shapes the agent's learned behavior. In this project, the reward function is meticulously designed to create a delicate balance between survival, active safety, and resource efficiency. It aims to train an agent that is not only risk-averse but also fuel-conscious.
+128: The total reward accumulated at each time step $t$ is calculated as a composite sum of several distinct positive rewards and negative penalties:
+130: The specific functional components of this summation are defined as follows:
+131: Positive Rewards (Incentives):
+132: Survival Reward ($R_{\text{survival}}$): A small, constant positive reward of +0.1 provided at every time step. This serves as baseline encouragement for the agent to simply stay alive as long as possible.
+133: Safety Reward ($R_{\text{safety}}$): This is calculated as +0.3 $\times$ average lidar distance. It actively rewards the agent for maintaining a significant distance from all perceived obstacles, encouraging a defensive "cushion" around the spacecraft.
+134: Goal Reward ($R_{\text{goal}}$): A substantial bonus of +1.0 awarded only when the agent successfully survives the entire targeted simulation duration. This is the terminal condition the agent aims to achieve.
+135: Negative Rewards (Penalties):
+136: Fuel Penalty ($R_{\text{fuel}}$): Calculated as $-0.02 \times \text{fuel used}$ during the time step. While necessary for maneuverability, excessive movement is penalized to encourage the agent to develop the optimal "think first" policy, thereby minimizing wasteful thrust actions.
+137: Proximity Penalty ($R_{\text{proximity}}$): Calculated as $-0.1 \times \text{closeness to asteroids}$. Being close to an asteroid, even without a physical impact, is treated as risky behavior that is actively penalized.
+138: Collision Penalty ($R_{\text{collision}}$): The most catastrophic outcome is assigned a massive negative reward of -1.0. 
+139: Synthesis and Interpretation
+140: By integrating these competing reward components, the agent is forced to navigate complex trade-offs. The combination of high collision and proximity penalties, against small survival rewards and a cost for fuel usage, leads to a reward structure that effectively ensures the agent learns to prioritize long-term survival through effective obstacle avoidance while concurrently developing strategies to use limited onboard fuel efficiently.
+145: CHAPTER 6
+147: RESULTS & EVALUATION
+149: 6.1 Key Metrics
+150: To rigorously evaluate the performance of the Deep Q-Network (DQN) agent and the effectiveness of the proposed collision avoidance framework, a set of key quantitative metrics was defined. These metrics assess the agent's capability across three critical dimensions: learning progress, operational safety, and resource efficiency. Tracking these metrics throughout the training process provides insight into the convergence of the model and its ability to generalize to new, stochastic obstacle scenarios.
+151: The primary metrics used for evaluation are detailed below:
+152: 1. Cumulative Episode Reward: This is the total reward accumulated by the agent over the course of a single episode. This metric serves as the comprehensive indicator of the agent's performance. As training progresses, an optimal learning curve should show this metric steadily increasing before asymptoting, indicating the agent is learning to maximize survival time and safety distance while minimizing fuel consumption and, most importantly, eliminating collision penalties.
+153: 2. Average Episode Length (Survival Time): This measures the number of time steps (seconds in simulation time) the spacecraft survives in an episode without a collision. The objective is to maximize this time, eventually reaching the predetermined "goal time" (set to 500 steps in our simulation), at which point a terminal bonus reward ($R_{\text{goal}}$) is granted. An increasing average episode length demonstrates successful obstacle avoidance learning.
+154: 3. Fuel Consumption: This is calculated as the cumulative total of fuel used during an episode based on the number of non-idle thrust actions taken. Monitoring fuel consumption is essential to verify that the agent is learning the intended "optimal resource management" policy. The goal is to observe a distinct decrease in total fuel usage once the agent stabilizes its survival strategies, proving it has learned to prioritize efficient maneuvering.
+155: 4. Total Collisions: This tracks the raw number of catastrophic failure events. While the collision penalty ($R_{\text{collision}}$) in the reward function drives learning, this metric provides a direct, non-mathematical measurement of safety. In the evaluation phase, this metric should be near zero for a successful, deployment-ready agent.
+156: 5. Average Lidar Distance: A metric specifically tracking the effectiveness of the active safety reward ($R_{\text{safety}}$). It measures the average separation distance maintained by the agent between the spacecraft and surrounding obstacles. A higher average value indicates that the agent is proactively keeping clear of obstacles rather than relying solely on last-minute maneuvers, which reduces proximity penalties.
+158: 6.2 Convergence & Test Results
+159: This section details the results obtained from training the Deep Q-Network (DQN) agent within the custom-built simulation environment and evaluates its performance during subsequent testing phases.
+160: Training and Convergence Analysis
+161: The DQN agent was trained over several thousand episodes to ensure robust learning in the stochastic asteroid-populated environment. A simulation goal time was set at 500 steps, meaning the agent had to survive for a predetermined duration to receive the terminal goal reward ($R_{\text{goal}}$).
+162: The training progress, visualized through the metrics defined in Section 6.1, exhibited clear convergence trends that validated the reward function design and neural network architecture:
+163: Cumulative Episode Reward: During the initial exploration phase (high $\epsilon$), the cumulative reward fluctuated significantly, often entering negative territory due to high penalties from frequent collisions and excessive fuel consumption. As training progressed and the exploration probability decayed, the reward curve showed a steady upwards trend, indicating the agent was learning to maximize positive reinforcements by prioritizing survival and distance from obstacles while actively minimizing costly fuel actions. The curve eventually asymptoted, suggesting the agent had successfully converged on an optimal policy.
+164: Episode Length (Survival Time): Early in training, average survival time was low, as the agent had not yet learned to effectively utilize thrust to avoid spawning asteroids. However, a distinctive learning curve emerged: average episode lengths rapidly increased before stabilizing at the 500-step target. Following sufficient training, the agent was consistently capable of surviving the entire designated simulation duration by executing preventative rather than purely reactive maneuvers.
+165: Fuel Consumption Behavior: A critical observation confirming the success of the "think first" objective was the evolution of fuel usage. Initially, the agent used high levels of fuel through inefficient, chaotic thruster firing. As learning stabilized, fuel consumption per episode dropped sharply and stabilized. This proved that the agent had internalized the fuel penalty ($R_{\text{fuel}}$) and learned to conserve resources by selecting optimal maneuvers (including the 'Idle' action) without compromising safety.
+166: Testing and Evaluation Results
+167: Following training convergence, the optimal model weights were frozen, and the trained agent was subjected to evaluation testing within the simulation. To rigorously test generalization, evaluation episodes utilized completely randomized asteroid spawning patterns and velocities that the agent had not encountered during training. The agent was required to navigate solely on its learned policy with exploration ($\epsilon$) set to zero.
+168: The testing results were highly positive:
+169: Obstacle Avoidance Performance: The agent successfully avoided near-miss and catastrophic collision scenarios with high reliability, consistently reaching the 500-step goal duration in randomized testing episodes. This demonstrated a strong capability to generalize learned avoidance patterns to new conjunction configurations.
+170: Operational Efficiency: In comparison to earlier phases of training, the agent demonstrated a significantly refined fuel strategy, proving that the autonomous system learns a robust, fuel-efficient maneuver policy that dynamically balances risk and operational costs.
+171: Qualitative Analysis: Observations of simulation playback indicated that the agent developed a defensive navigation behavior—proactively steering to maintain wide berths around obstacles rather than waiting until the last second, effectively minimizing the proximity penalty and maximizing the safety distance reward.
+175: CHAPTER 7
+177: CONCLUSION
+179: This project successfully designed and implemented an intelligent autonomous decision-support system for satellite collision avoidance in Low Earth Orbit (LEO). By modeling the problem as a Markov Decision Process (MDP) and utilizing a Deep Q-Network (DQN), the system demonstrated a robust capability to navigate a spacecraft through a dynamic, obstacle-filled environment while operating under strict fuel constraints.
+180: The key contribution of this work lies in the formulation of a complex, multi-objective reward function. By intricately balancing competing priorities—maximizing survival and active safety measures against necessary fuel usage penalties—the Reinforcement Learning agent effectively learned an optimal policy that "thinks first." The agent successfully internalized safe navigation strategies, understanding that while immediate movement avoids a proximity risk, conserving the limited fuel is essential for long-term survival in the simulation. This adaptive, machine-learning-based approach overcomes the rigid limitations of traditional fixed, threshold-based collision avoidance methods.
+181: In conclusion, this project provides a rigorous foundation for future automated space traffic management systems. The results prove that intelligent, autonomous decision-making can dramatically improve operational efficiency, strictly uphold satellite safety standards, and extend the mission lifespan of vital space infrastructure.
+183: Future Scope
+184: While the current system has proven highly effective in a simulation environment, several avenues for future development can enhance its robustness and applicability:
+185: 3D Environment Modeling: Expanding the simulation from a 2D continuous space to a full 3D orbital dynamic model.
+186: Multiple Obstacle Tracking: Training the agent to handle complex conjunction scenarios involving multiple simultaneously approaching debris pieces.
+187: Real-world Orbital Telemetry: Validating the model using real-world orbital data and incorporating uncertainty in orbital propagation.
+188: Continuous Action Spaces: Investigating the use of actor-critic methods (like DDPG or PPO) to allow the agent to control variable thrust levels rather than discrete movements.
+191: References
+192: Bourriez,N.,et.al.(2023). Spacecraft Autonomous Decision-Planning for Collision Avoidance: A Reinforcement Learning Approach. arXiv Preprint. 
+193: Patnala,S.,et.al.(2024). On-Orbit Servicing for Spacecraft Collision Avoidance with Autonomous Decision Making. arXiv Preprint. 
+194: Blaise,J.,et.al.(2023). Space Manipulator Collision Avoidance Using Deep Reinforcement Learning Control. Aerospace, MDPI. 
+195: Poupon,A.,et.al.(2024). AI-Driven Risk-Aware Scheduling for Active Debris Removal Missions. arXiv Preprint. 
+196: Rossi,F.,et.al.(2024). Redundant Space Manipulator Autonomous Guidance for In-Orbit Servicing via Deep Reinforcement Learning. Aerospace Journal, MDPI. 
+197: Pavanello,Z.,et.al.(2025). CAMmary: A Review of Spacecraft Collision Avoidance Manoeuvre Design Methods. Acta Astronautica / arXiv. 
+198: Patnala,S.,_&_Abdin,A.(2024). Autonomous Decision Making for On-Orbit Collision Avoidance Missions. arXiv Preprint. 
+199: Barth,A.L.,et.al.(2025). Machine Learning-Based Optimal Trajectory Planning for Spacecraft Proximity Operations. AIAA SciTech Forum. 
+200: Chen, X., Phillips, R., & Copp, D. (2025).
+Planning Autonomous Spacecraft Rendezvous and Docking Trajectories via Reinforcement Learning. Conference Proceedings. 
+201: Sanchez, J., & Vasile, M. (2023).
+Intelligent Decision Support for Collision Avoidance Manoeuvre Planning Under Uncertainty. Advances in Space Research. 
+202: Paul, A., et al. (2023).
+Probabilistic Space Weather Modeling and its Impact on Space Situational Awareness. AMOS Conference Proceedings. 
+203: Gonzalo, J., et al. (2024).
+On-Board Collision Avoidance Applications Based on Machine Learning and Analytical Methods. ESA Space Debris Conference. 
+204: Li, Y., et al. (2025).
+Deep Reinforcement Learning for Joint Observation and On-Orbit Computation Scheduling in Agile Satellite Constellations. Aerospace Journal, MDPI. 
+205: IEEE Conference Paper (2025).
+Deep Reinforcement Learning for Adaptive Traffic Engineering in Satellite Constellation Networks. IEEE Xplore Proceedings. 
+206: Wang, H., et al. (2025).
+Deep Reinforcement Learning-Based Routing Method for LEO Mega-Constellation Satellite Networks. Sensors Journal, MDPI.
+
+--- TABLES ---
+Table 0 - 0,0: Ref
+Table 0 - 0,1: Author / Year
+Table 0 - 0,2: Method
+Table 0 - 0,3: Environment
+Table 0 - 0,4: State Space
+Table 0 - 0,5: Action Space
+Table 0 - 1,0: [1]
+Table 0 - 1,1: Bourriez et al., 2023
+Table 0 - 1,2: Reinforcement Learning for autonomous collision avoidance maneuver planning
+Table 0 - 1,3: Simulated spacecraft conjunction scenarios with probabilistic orbital uncertainty
+Table 0 - 1,4: Collision probability, miss distance, orbital uncertainty, fuel constraints
+Table 0 - 1,5: Maneuver timing and magnitude selection
+Table 0 - 2,0: [2]
+Table 0 - 2,1: Patnala et al., 2024
+Table 0 - 2,2: RL based autonomous servicing and collision avoidance
+Table 0 - 2,3: On orbit servicing simulation for endangered satellites
+Table 0 - 2,4: Satellite threat state, target location, servicing readiness, mission constraints
+Table 0 - 2,5: Rendezvous, servicing maneuver, collision mitigation action
+Table 0 - 3,0: [3]
+Table 0 - 3,1: Blaise et al., 2023
+Table 0 - 3,2: Deep Reinforcement Learning control
+Table 0 - 3,3: Space robotic manipulator simulation
+Table 0 - 3,4: Manipulator joint positions, obstacle positions, collision proximity
+Table 0 - 3,5: Robotic movement and avoidance controls
+Table 0 - 4,0: [4]
+Table 0 - 4,1: Poupon et al., 2024
+Table 0 - 4,2: AI risk aware scheduling
+Table 0 - 4,3: Active debris removal mission planning simulator
+Table 0 - 4,4: Debris priority, mission timing, operational risk, scheduling constraints
+Table 0 - 4,5: Mission scheduling and debris removal task allocation
+Table 0 - 5,0: [5]
+Table 0 - 5,1: Rossi et al., 2024
+Table 0 - 5,2: Deep RL autonomous guidance
+Table 0 - 5,3: In orbit servicing robotic guidance simulation
+Table 0 - 5,4: Robotic arm state, servicing target position, obstacle state
+Table 0 - 5,5: Guidance trajectory and manipulator controls
+Table 0 - 6,0: [6]
+Table 0 - 6,1: Pavanello et al., 2025
+Table 0 - 6,2: Comparative survey of CAM methods
+Table 0 - 6,3: Multi domain spacecraft collision avoidance systems
+Table 0 - 6,4: Varies by reviewed method
+Table 0 - 6,5: Varies by reviewed method
+Table 0 - 7,0: [7]
+Table 0 - 7,1: Patnala and Abdin, 2024
+Table 0 - 7,2: RL based autonomous mission planning
+Table 0 - 7,3: Satellite servicing and avoidance simulation
+Table 0 - 7,4: Collision threat parameters, mission state, fuel budget
+Table 0 - 7,5: Avoidance mission planning actions
+Table 0 - 8,0: [8]
+Table 0 - 8,1: Barth et al., 2025
+Table 0 - 8,2: Proximal Policy Optimization
+Table 0 - 8,3: Spacecraft proximity operations simulation
+Table 0 - 8,4: Relative spacecraft position, velocity, fuel state
+Table 0 - 8,5: Burn magnitude and trajectory adjustment
+Table 0 - 9,0: [9]
+Table 0 - 9,1: Chen, Phillips, Copp, 2025
+Table 0 - 9,2: Reinforcement Learning for rendezvous and docking
+Table 0 - 9,3: 6 DOF spacecraft docking environment
+Table 0 - 9,4: Relative orientation, velocity, docking constraints
+Table 0 - 9,5: Docking maneuver actions
+Table 0 - 10,0: [10]
+Table 0 - 10,1: Sanchez and Vasile, 2023
+Table 0 - 10,2: Probabilistic decision support framework
+Table 0 - 10,3: Collision avoidance planning under uncertainty
+Table 0 - 10,4: Collision probability, orbital uncertainty, maneuver cost
+Table 0 - 10,5: Maneuver planning decisions
+Table 0 - 11,0: [11]
+Table 0 - 11,1: Paul et al., 2023
+Table 0 - 11,2: Probabilistic environmental modeling
+Table 0 - 11,3: Space situational awareness with atmospheric uncertainty
+Table 0 - 11,4: Space weather variables, orbital density, collision probability
+Table 0 - 11,5: Risk estimation, no direct maneuver actions
+Table 0 - 12,0: [12]
+Table 0 - 12,1: Gonzalo et al., 2024
+Table 0 - 12,2: Machine Learning plus analytical methods
+Table 0 - 12,3: Onboard spacecraft collision avoidance applications
+Table 0 - 12,4: Orbital telemetry, collision indicators, uncertainty estimates
+Table 0 - 12,5: Collision mitigation recommendations
+Table 0 - 13,0: [13]
+Table 0 - 13,1: Li et al., 2025
+Table 0 - 13,2: Deep Reinforcement Learning with GRU
+Table 0 - 13,3: Agile satellite constellation scheduling
+Table 0 - 13,4: Observation tasks, onboard compute state, network demand
+Table 0 - 13,5: Scheduling and resource allocation actions
+Table 0 - 14,0: [14]
+Table 0 - 14,1: IEEE Conference, 2025
+Table 0 - 14,2: Policy based Deep RL
+Table 0 - 14,3: Satellite constellation traffic engineering
+Table 0 - 14,4: Traffic load, network topology, communication demand
+Table 0 - 14,5: Routing and traffic balancing actions
+Table 0 - 15,0: [15]
+Table 0 - 15,1: Wang et al., 2025
+Table 0 - 15,2: Graph Neural Network plus DRL
+Table 0 - 15,3: LEO mega constellation routing network
+Table 0 - 15,4: Satellite graph topology, traffic flow, latency state
+Table 0 - 15,5: Routing path selection
+Table 0 - 16,0: [16]
+Table 0 - 16,1: OUR Proposed Project.
+Table 0 - 16,2: Markov Decision Process with Q Learning and DQN based autonomous collision avoidance decision support
+Table 0 - 16,3: Synthetic conjunction event simulator for Low Earth Orbit satellite collision scenarios
+Table 0 - 16,4: Collision probability, miss distance, time to closest approach, relative velocity, remaining fuel budget
+Table 0 - 16,5: No maneuver, small maneuver, medium maneuver, large maneuver decision selection
+Table 1 - 0,0: Author / Year
+Table 1 - 0,1: Key Result
+Table 1 - 0,2: Limitation
+Table 1 - 0,3: Revenue Gain
+Table 1 - 0,4: Advantage of Proposed Method
+Table 1 - 1,0: Bourriez et al., 2023
+Table 1 - 1,1: Reduced collision probability with improved maneuver efficiency
+Table 1 - 1,2: High simulation complexity, expensive computation
+Table 1 - 1,3: Lower satellite loss risk, fuel savings
+Table 1 - 1,4: Simpler event based simulator reduces implementation cost while preserving decision quality
+Table 1 - 2,0: Patnala et al., 2024
+Table 1 - 2,1: Demonstrated autonomous servicing feasibility
+Table 1 - 2,2: Requires servicing satellite infrastructure, multi agent complexity
+Table 1 - 2,3: Potential mission protection for high value satellites
+Table 1 - 2,4: Avoids costly servicing systems by focusing on direct maneuver decision support
+Table 1 - 3,0: Blaise et al., 2023
+Table 1 - 3,1: Improved robotic obstacle avoidance performance
+Table 1 - 3,2: Focused on manipulators, not orbital conjunctions
+Table 1 - 3,3: Limited to servicing and robotics missions
+Table 1 - 3,4: Directly targets operational satellite collision avoidance
+Table 1 - 4,0: Poupon et al., 2024
+Table 1 - 4,1: Better debris removal scheduling
+Table 1 - 4,2: Not real time collision response
+Table 1 - 4,3: Long term debris mitigation savings
+Table 1 - 4,4: Provides immediate conjunction decision making instead of delayed debris removal
+Table 1 - 5,0: Rossi et al., 2024
+Table 1 - 5,1: Safer in orbit servicing trajectories
+Table 1 - 5,2: Robotics specific application
+Table 1 - 5,3: Improved servicing mission safety
+Table 1 - 5,4: Broader use for standard satellite operators without servicing hardware
+Table 1 - 6,0: Pavanello et al., 2025
+Table 1 - 6,1: Identified future need for AI based CAM systems
+Table 1 - 6,2: Review only, no direct implementation
+Table 1 - 6,3: Strategic policy value only
+Table 1 - 6,4: Converts surveyed research gaps into deployable RL framework
+Table 1 - 7,0: Patnala and Abdin, 2024
+Table 1 - 7,1: Autonomous mission planning success
+Table 1 - 7,2: Heavy hardware and compute assumptions
+Table 1 - 7,3: High asset protection value
+Table 1 - 7,4: Lightweight model supports easier academic and operational deployment
+Table 1 - 8,0: Barth et al., 2025
+Table 1 - 8,1: Fuel efficient trajectory planning
+Table 1 - 8,2: Proximity operations focus
+Table 1 - 8,3: Improved mission efficiency
+Table 1 - 8,4: Focuses specifically on conjunction avoidance under uncertainty
+Table 1 - 9,0: Chen et al., 2025
+Table 1 - 9,1: Robust docking under nonlinear constraints
+Table 1 - 9,2: High complexity control problem
+Table 1 - 9,3: Valuable for docking missions only
+Table 1 - 9,4: Lower complexity design improves feasibility for mini project implementation
+Table 1 - 10,0: Sanchez and Vasile, 2023
+Table 1 - 10,1: Improved uncertainty aware planning
+Table 1 - 10,2: No adaptive RL optimization
+Table 1 - 10,3: Reduced planning inefficiencies
+Table 1 - 10,4: RL based learning adapts dynamically over time
+Table 1 - 11,0: Paul et al., 2023
+Table 1 - 11,1: Improved collision probability prediction
+Table 1 - 11,2: No maneuver automation
+Table 1 - 11,3: Better situational awareness
+Table 1 - 11,4: Converts prediction into direct operational decisions
+Table 1 - 12,0: Gonzalo et al., 2024
+Table 1 - 12,1: Demonstrated onboard ML support
+Table 1 - 12,2: Limited autonomous decision capability
+Table 1 - 12,3: Potential onboard operational savings
+Table 1 - 12,4: Full decision policy provides greater automation
+Table 1 - 13,0: Li et al., 2025
+Table 1 - 13,1: Improved scheduling efficiency
+Table 1 - 13,2: Scheduling only
+Table 1 - 13,3: Resource optimization for constellations
+Table 1 - 13,4: Collision avoidance directly protects operational assets
+Table 1 - 14,0: IEEE Conference, 2025
+Table 1 - 14,1: Better traffic engineering performance
+Table 1 - 14,2: Communication focused
+Table 1 - 14,3: Network performance improvement
+Table 1 - 14,4: Safety and maneuver optimization for physical spacecraft
+Table 1 - 15,0: Wang et al., 2025
+Table 1 - 15,1: Reduced routing delay
+Table 1 - 15,2: Network layer only
+Table 1 - 15,3: Communication efficiency gains
+Table 1 - 15,4: Addresses mission survival rather than communication optimization
+Table 1 - 16,0: Proposed Project, 2026
+Table 1 - 16,1: Adaptive maneuver policy balancing safety and fuel cost
+Table 1 - 16,2: Simplified orbital realism compared to high fidelity simulators
+Table 1 - 16,3: Reduces fuel waste, collision losses, and manual operational cost
+Table 1 - 16,4: Low complexity, academic feasibility, clear MDP mapping, direct RL implementation, scalable future upgrades
+Table 2 - 0,0: Layer
+Table 2 - 0,1: Technology
+Table 2 - 0,2: Role
+Table 2 - 1,0: RL Framework
+Table 2 - 1,1: PyTorch 2.x
+Table 2 - 1,2: DQN policy network, target network, gradient clipping, Adam optimiser
+Table 2 - 2,0: Environment
+Table 2 - 2,1: Custom PricingEnv (Gym-compatible)
+Table 2 - 2,2: MDP simulation: stochastic demand, inventory, competitor price dynamics
+Table 2 - 3,0: State Processing
+Table 2 - 3,1: NumPy + Min-Max Normalisation
+Table 2 - 3,2: 5-dim state vector normalised to [0, 1] before network input
+Table 2 - 4,0: Training Infra
+Table 2 - 4,1: Experience Replay + Target Net
+Table 2 - 4,2: deque(10,000) replay buffer; target net sync every 50 steps
+Table 2 - 5,0: Exploration
+Table 2 - 5,1: Epsilon-Greedy Decay
+Table 2 - 5,2: ε decays from 1.0 to 0.05 (×0.995 per step) over 600 episodes
+Table 2 - 6,0: Frontend
+Table 2 - 6,1: React 18
+Table 2 - 6,2: Inference dashboard: Q-value display, price recommendation, revenue forecast
+Table 2 - 7,0: Persistence
+Table 2 - 7,1: dqn_pricing.pt
+Table 2 - 7,2: PyTorch model checkpoint saved on training completion
+Table 2 - 8,0: Analysis
+Table 2 - 8,1: Matplotlib + Pandas
+Table 2 - 8,2: Reward/loss convergence plots, episode-level CSV logs
+Table 3 - 0,0: Symbol
+Table 3 - 0,1: Component
+Table 3 - 0,2: Definition
+Table 3 - 1,0: S
+Table 3 - 1,1: State Space
+Table 3 - 1,2: 5-dimensional continuous vector normalised to [0, 1]: demand level, inventory (÷500), competitor price (÷200), time of day, and price elasticity.
+Table 3 - 2,0: A
+Table 3 - 2,1: Action Space
+Table 3 - 2,2: 10 discrete price multipliers: ×0.70, ×0.80, ×0.85, ×0.90, ×0.95, ×1.00, ×1.05, ×1.10, ×1.20, ×1.30 applied to the $100 base price.
+Table 3 - 3,0: P
+Table 3 - 3,1: Transition Dynamics
+Table 3 - 3,2: Stochastic. Demand level, competitor price, and time-of-day shift randomly each step following bounded random processes.
+Table 3 - 4,0: R
+Table 3 - 4,1: Reward Function
+Table 3 - 4,2: (Revenue − Holding Cost − Missed-Sale Penalty) ÷ 1000. Scaled to stabilise gradient updates during backpropagation.
+Table 3 - 5,0: γ
+Table 3 - 5,1: Discount Factor
+Table 3 - 5,2: γ = 0.95 — values future rewards strongly, preventing myopic pricing decisions that deplete inventory prematurely.
+Table 3 - 6,0: T
+Table 3 - 6,1: Terminal Condition
+Table 3 - 6,2: Episode ends when inventory reaches 0 or step count ≥ 50.
